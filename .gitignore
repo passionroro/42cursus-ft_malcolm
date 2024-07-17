@@ -2,4 +2,4 @@ obj/
 obj/*.o
 libft/*.o
 ft_malcom
-
+*.swp

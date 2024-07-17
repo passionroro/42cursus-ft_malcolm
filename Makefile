@@ -3,13 +3,19 @@ LIBFT 		= 	libft.a
 LIB_DIR		=	libft/
 OBJ_DIR		=	obj/
 SRCS_DIR	=	src/
-SRCS		=	main.c
+SRCS		=	main.c error.c parsing.c
+
+TEST_DIR	= src/tests/
+TEST_SRCS	= test_main.c
+TEST_NAME	= run_tests
 
 OBJS = $(addprefix $(OBJ_DIR), $(SRCS:.c=.o))
+TEST_OBJS = $(addprefix $(OBJ_DIR), $(TEST_SRCS:.c=.o))
 
 LFLAGS = -I include/
 CFLAGS = -Wall -Wextra -Werror
 DEBUGGING = -g -O0
+
 CC = gcc
 RM = rm -rf
 AR = ar rc
@@ -35,9 +41,21 @@ clean:
 
 fclean: clean
 		$(RM) $(NAME)
+		$(RM) $(TEST_NAME)
 		make -C $(LIB_DIR) fclean
 		@echo "\033[1;31m$(NAME) and libft cleaned\033[m"
 
 re: fclean all
+
+# Unit tests
+$(OBJ_DIR)%.o : $(TEST_DIR)%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) -c $(CFLAGS) $(DEBUGGING) $(LFLAGS) $< -o $@
+
+$(TEST_NAME): $(filter-out $(OBJ_DIR)main.o, $(OBJS)) $(TEST_OBJS)
+	$(CC) $(CFLAGS) $^ $(LFLAGS) $(LIB_DIR)$(LIBFT) -o $@
+
+test: $(TEST_NAME)
+	./$(TEST_NAME)
 
 .PHONY: all clean re fclean
