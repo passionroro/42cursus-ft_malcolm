@@ -3,10 +3,10 @@ LIBFT 		= 	libft.a
 LIB_DIR		=	libft/
 OBJ_DIR		=	obj/
 SRCS_DIR	=	src/
-SRCS		=	main.c error.c parsing.c
+SRCS		=	main.c error.c parsing.c utils.c
 
 TEST_DIR	= src/tests/
-TEST_SRCS	= test_main.c
+TEST_SRCS	= test_main.c test_parsing.c
 TEST_NAME	= run_tests
 
 OBJS = $(addprefix $(OBJ_DIR), $(SRCS:.c=.o))

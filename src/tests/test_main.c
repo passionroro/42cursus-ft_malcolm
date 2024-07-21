@@ -1,56 +1,50 @@
 #include "test.h"
 
-void capture_stderr(const char* test_name, void (*test_function)(), char errors[MAX_ERRORS][MAX_ERROR_LENGTH]) {
-    char filename[64];
+t_test redirect_stderr_to_file(const char* test_name, char **(*test_function)()) 
+{
+    t_test  test;
+    char    filename[64];
+
     snprintf(filename, sizeof(filename), "stderr_%s.txt", test_name);
     
-    // Redirect stderr to a file
     freopen(filename, "w", stderr);
     
-    // Run the test
-    test_function();
+    test.expect = test_function();
     
-    // Restore stderr
     fflush(stderr);
     freopen("/dev/tty", "w", stderr);
     
-    // Read the captured output
-    FILE *f = fopen(filename, "r");
-    if (f) {
-        for (int i = 0; i < MAX_ERRORS; i++) {
-            if (fgets(errors[i], MAX_ERROR_LENGTH, f) == NULL) {
-                break;
-            }
-            // Remove newline character if present
-            errors[i][strcspn(errors[i], "\n")] = 0;
-        }
-        fclose(f);
-    }
+    test.fd = open(filename, O_RDONLY);
     
-    // Remove the temporary file
     remove(filename);
+    return test;
 }
 
-void test_invalid_ip() {
-    parse_ip_address("256.0.0.1", NULL);
-    parse_ip_address("0.0.0.-1", NULL);
-    parse_ip_address("0.0.0", NULL);
-    parse_ip_address("0.0.0.0.0", NULL);
-    parse_ip_address("0.0.0.0x", NULL);
-    parse_ip_address("0.0.0.0000", NULL);
+void    run_test(const char* test_name, char **(*test_function)())
+{
+    t_test    test;
+	int nb = 0;
+	char	*test_line;
+
+    printf("Testing %s...\n", test_name);
+
+	test = redirect_stderr_to_file(test_name, test_function);
+	test_line = get_next_line(test.fd);
+	while (test_line)
+	{
+        TEST(strstr(test_line, test.expect[nb]) != NULL);
+		free(test_line);
+		test_line = get_next_line(test.fd);
+        nb++;
+	}
+	close (test.fd);
+
+    printf(GREEN "%s passed successfully!" RESET "\n\n", test_name);
 }
 
-int main() {
-    char errors[MAX_ERRORS][MAX_ERROR_LENGTH] = {0};
-    capture_stderr("invalid_ip", test_invalid_ip, errors);
-    
-    TEST("IP > 255", strstr(errors[0], "ip must be between [0-255]") != NULL);
-    TEST("Negative IP", strstr(errors[1], "non-digit character in ip") != NULL);
-    TEST("Incomplete IP", strstr(errors[2], "ip must be in IPv4 format: [x.x.x.x]") != NULL);
-    TEST("Too many octets", strstr(errors[3], "ip must be in IPv4 format: [x.x.x.x]") != NULL);
-    TEST("Non-digit character", strstr(errors[4], "non-digit character in ip") != NULL);
-    TEST("Too many digits", strstr(errors[5], "ip must be between [0-255]") != NULL);
-
-    printf(GREEN "All tests passed successfully!" RESET "\n");
+int main()
+{
+    run_test("invalid_ip", test_invalid_ip);
+    run_test("invalid_mac", test_invalid_mac);
     return 0;
 }
