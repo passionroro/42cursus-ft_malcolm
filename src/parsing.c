@@ -1,7 +1,7 @@
-#include "ft_malcom.h"
+#include "ft_malcolm.h"
 
 // MAC
-int	parse_mac_octet(char *str)
+int	parse_mac_octet(const char *str)
 {
 	int i = -1;
 	
@@ -23,7 +23,7 @@ int	parse_mac_octet(char *str)
 	return 0;
 }
 
-int	parse_mac_address(char *str, const char *mac)
+int	parse_mac_address(const char *str, uint8_t (*mac)[MAC_LENGTH])
 {
 	char** mac_split = ft_split(str, ':');
 	if (!mac_split)
@@ -48,16 +48,16 @@ int	parse_mac_address(char *str, const char *mac)
 			free_array(mac_split);
 			return -1;
 		}
+		(*mac)[i] = (uint8_t)strtol(mac_split[i], NULL, 16);
 	}
 
-	mac = str;
-	(void)mac;
+	free_array(mac_split);
 
 	return 0;
 }
 
 // IP
-int	parse_ip_octet(char *str)
+int	parse_ip_octet(const char *str)
 {
 	int octet, i = -1;
 	
@@ -86,7 +86,7 @@ int	parse_ip_octet(char *str)
 	return 0;
 }
 
-int	parse_ip_address(char *str, const char *ip)
+int	parse_ip_address(const char *str, uint8_t (*ip)[IPV4_LENGTH])
 {
 	char** ip_split = ft_split(str, '.');
 	if (!ip_split)
@@ -113,23 +113,37 @@ int	parse_ip_address(char *str, const char *ip)
 		}
 	}
 
-	ip = str;
-	(void)ip;
+	int ip_conversion = inet_pton(AF_INET, str, *ip);
+	if (ip_conversion != 1)
+	{
+		free_array(ip_split);
+		if (ip_conversion == 0)
+		{
+			errno = EINVAL;
+		}	
+		else if (ip_conversion == -1)
+		{
+			errno = EAFNOSUPPORT;
+		}	
+		handle_error("ip conversion text to binary failed");
+	}
+
+	free_array(ip_split);
 
 	return 0;
 }
 
 // MAIN
-int	parse_arguments(char** argv, t_client *source, t_client *target)
+int	parse_arguments(char **argv, t_arp_header *arp)
 {
-	if (parse_ip_address(argv[1], source->ip) != 0 ||
-		parse_ip_address(argv[3], target->ip) != 0)
+	if (parse_ip_address(argv[1], &(arp->source.ip)) != 0 ||
+		parse_ip_address(argv[3], &(arp->target.ip)) != 0)
 	{
 		return -1;
 	}
 
-	if (parse_mac_address(argv[2], source->mac) != 0 ||
-		parse_mac_address(argv[4], target->mac) != 0)
+	if (parse_mac_address(argv[2], &(arp->source.mac)) != 0 ||
+		parse_mac_address(argv[4], &(arp->target.mac)) != 0)
 	{
 		return -1;
 	}

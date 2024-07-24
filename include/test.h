@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-#include "ft_malcom.h"
+#include "ft_malcolm.h"
 
 #define RED "\x1b[31m"
 #define GREEN "\x1b[32m"

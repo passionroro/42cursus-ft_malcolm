@@ -1,4 +1,4 @@
-NAME 		=	ft_malcom
+NAME 		=	ft_malcolm
 LIBFT 		= 	libft.a
 LIB_DIR		=	libft/
 OBJ_DIR		=	obj/

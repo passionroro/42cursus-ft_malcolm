@@ -1,6 +1,6 @@
 obj/
 obj/*.o
 libft/*.o
-ft_malcom
+ft_malcolm
 *.swp
 .vscode/
