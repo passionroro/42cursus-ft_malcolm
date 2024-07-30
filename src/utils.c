@@ -26,6 +26,20 @@ void print_ip(const uint8_t ip[IPV4_LENGTH]) {
 void verbose(t_arp_header arp)
 {
 	printf("ARP Header:\n");
+	printf("  Destination MAC address: ");
+	print_mac(arp.eth_header.destination_mac);
+	printf("\n");
+
+	printf("  Source MAC address: ");
+	print_mac(arp.eth_header.source_mac);
+	printf("\n");
+
+	printf("  Ethernet type: 0x%04x ", ntohs(arp.eth_header.ether_type));
+	switch(ntohs(arp.eth_header.ether_type)) {
+		case 0x0806: printf("(ARP)\n"); break;
+		default: printf("(Unknown)\n");
+	}
+
 	printf("  Hardware type: 0x%04x ", ntohs(arp.hardware_type));
 	switch(ntohs(arp.hardware_type)) {
 		case 1: printf("(Ethernet)\n"); break;
@@ -48,19 +62,19 @@ void verbose(t_arp_header arp)
 		default: printf("(Unknown)\n");
 	}
 
-	printf("  Sender MAC address: ");
-	print_mac(arp.source.mac);
-	printf("\n");
-
-	printf("  Sender IP address: ");
+	printf("  Source IP address being spoofed : ");
 	print_ip(arp.source.ip);
 	printf("\n");
 
-	printf("  Target MAC address: ");
-	print_mac(arp.target.mac);
+	printf("  Source MAC address (spoofed!) : ");
+	print_mac(arp.source.mac);
 	printf("\n");
 
 	printf("  Target IP address: ");
 	print_ip(arp.target.ip);
+	printf("\n");
+
+	printf("  Target MAC address: ");
+	print_mac(arp.target.mac);
 	printf("\n");
 }
