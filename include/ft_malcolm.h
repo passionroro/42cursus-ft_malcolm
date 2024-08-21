@@ -19,6 +19,7 @@
 #include <net/if.h>
 #include <ifaddrs.h>
 #include <linux/if_link.h>
+#include <linux/if_arp.h>
 
 #define ETHERNET 1
 #define REQUEST 1
@@ -34,28 +35,22 @@ typedef struct s_client
 	uint8_t mac[MAC_LENGTH];
 } t_client;
 
-typedef struct s_eth_header
-{
-	uint8_t destination_mac[MAC_LENGTH];
-	uint8_t source_mac[MAC_LENGTH];
-	uint16_t ether_type;
-} __attribute__((packed)) t_eth_header;
-
-typedef struct s_arp_header
-{
-	uint16_t protocol_type;
-	uint16_t hardware_type;
-	uint8_t hardware_len;
-	uint8_t protocol_len;
-	uint16_t opcode;
-	t_client source;
-	t_client target;
-} __attribute__((packed)) t_arp_header;
+typedef struct s_arphdr {
+	__be16		ar_hrd;		/* format of hardware address	*/
+	__be16		ar_pro;		/* format of protocol address	*/
+	unsigned char	ar_hln;		/* length of hardware address	*/
+	unsigned char	ar_pln;		/* length of protocol address	*/
+	__be16		ar_op;		/* ARP opcode (command)		*/
+	unsigned char		ar_sha[ETH_ALEN];	/* sender hardware address	*/
+	unsigned char		ar_sip[4];		/* sender IP address		*/
+	unsigned char		ar_tha[ETH_ALEN];	/* target hardware address	*/
+	unsigned char		ar_tip[4];		/* target IP address		*/
+} t_arphdr;
 
 typedef struct s_arp_packet
 {
-	t_arp_header arp_header;
-	t_eth_header eth_header;
+	struct ethhdr *eth;
+	t_arphdr *arp;
 } t_arp_packet;
 
 typedef struct s_malcolm

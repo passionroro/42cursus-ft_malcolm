@@ -1,5 +1,5 @@
 #include "ft_malcolm.h"
-
+/*
 void create_arp_header(t_arp_header *arp, const t_client *source, const t_client *target)
 {
 	arp->hardware_type = htons(ETHERNET);
@@ -34,3 +34,4 @@ int send_arp_packet(t_malcolm *malcolm)
 	}
 	return 0;
 }
+*/
