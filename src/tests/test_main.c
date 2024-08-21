@@ -6,16 +6,19 @@ t_test redirect_stderr_to_file(const char* test_name, char **(*test_function)())
     char    filename[64];
 
     snprintf(filename, sizeof(filename), "stderr_%s.txt", test_name);
-    
     freopen(filename, "w", stderr);
     
     test.expect = test_function();
-    
+
     fflush(stderr);
     freopen("/dev/tty", "w", stderr);
     
     test.fd = open(filename, O_RDONLY);
-    
+    if (!test.fd)
+    {
+        handle_error("open");
+    }
+
     remove(filename);
     return test;
 }

@@ -3,7 +3,7 @@ LIBFT 		= 	libft.a
 LIB_DIR		=	libft/
 OBJ_DIR		=	obj/
 SRCS_DIR	=	src/
-SRCS		=	main.c error.c parsing.c utils.c
+SRCS		=	main.c error.c parsing.c utils.c packets.c sockets.c
 
 TEST_DIR	= src/tests/
 TEST_SRCS	= test_main.c test_parsing.c

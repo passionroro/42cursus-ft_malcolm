@@ -134,16 +134,16 @@ int	parse_ip_address(const char *str, uint8_t (*ip)[IPV4_LENGTH])
 }
 
 // MAIN
-int	parse_arguments(char **argv, t_arp_header *arp)
+int	parse_arguments(char **argv, t_client *source, t_client *target)
 {
-	if (parse_ip_address(argv[1], &(arp->source.ip)) != 0 ||
-		parse_ip_address(argv[3], &(arp->target.ip)) != 0)
+	if (parse_ip_address(argv[1], &(source->ip)) != 0 ||
+		parse_ip_address(argv[3], &(target->ip)) != 0)
 	{
 		return -1;
 	}
 
-	if (parse_mac_address(argv[2], &(arp->source.mac)) != 0 ||
-		parse_mac_address(argv[4], &(arp->target.mac)) != 0)
+	if (parse_mac_address(argv[2], &(source->mac)) != 0 ||
+		parse_mac_address(argv[4], &(target->mac)) != 0)
 	{
 		return -1;
 	}

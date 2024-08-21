@@ -11,18 +11,21 @@ char *expect_ip[6] = {
 
 char **test_invalid_ip() 
 {
-    parse_ip_address("256.0.0.1", NULL);
-    parse_ip_address("0.0.0.-1", NULL);
-    parse_ip_address("0.0.0", NULL);
-    parse_ip_address("0.0.0.0.0", NULL);
-    parse_ip_address("0.0.0.0x", NULL);
-    parse_ip_address("0.0.0.0000", NULL);
+    uint8_t test_ip[IPV4_LENGTH];
+
+    parse_ip_address("256.0.0.1", &test_ip);
+    parse_ip_address("0.0.0.-1", &test_ip);
+    parse_ip_address("0.0.0", &test_ip);
+    parse_ip_address("0.0.0.0.0", &test_ip);
+    parse_ip_address("0.0.0.0x", &test_ip);
+    parse_ip_address("0.0.0.0000", &test_ip);
 
     return expect_ip;
 }
 
 
-char *expect_mac[5] = {
+char *expect_mac[6] = {
+    "mac octet must be hexadecimal",
     "mac octet must be hexadecimal",
     "mac octet must have a length of 2",
     "mac must contain 6 octets",
@@ -32,11 +35,14 @@ char *expect_mac[5] = {
 
 char **test_invalid_mac() 
 {
-    parse_mac_address("00:aa:ff:99:00:fg", NULL);
-    parse_mac_address("00:aa:ff:99:00:-ee", NULL);
-    parse_mac_address("00:aa:ff:99:00", NULL);
-    parse_mac_address("00:aa:ff:99:00:ee:00", NULL);
-    parse_mac_address("00:aa:ff:99:00:eee", NULL);
+    uint8_t test_mac[MAC_LENGTH];
+    
+    parse_mac_address("00:aa:ff:99:00:fg", &test_mac);
+    parse_mac_address("00:aa:ff:99:00:-e", &test_mac);
+    parse_mac_address("00:aa:ff:99:00:-ee", &test_mac);
+    parse_mac_address("00:aa:ff:99:00", &test_mac);
+    parse_mac_address("00:aa:ff:99:00:ee:00", &test_mac);
+    parse_mac_address("00:aa:ff:99:00:eee", &test_mac);
     
     return expect_mac;
 }

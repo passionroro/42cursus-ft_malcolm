@@ -6,75 +6,82 @@ int ft_ishexadecimal(int c)
 	return (ft_isdigit(c) || (c >= 'a' && c <= 'f'));
 }
 
-size_t	get_array_length(char **arr)
+size_t get_array_length(char **arr)
 {
 	size_t i = -1;
-	while (arr[++i]) { ; }
+	while (arr[++i])
+	{
+		;
+	}
 	return i;
 }
 
 // print utils and verbose mode
-void print_mac(const uint8_t mac[MAC_LENGTH]) {
-	printf("%02x:%02x:%02x:%02x:%02x:%02x", 
+void print_mac(const uint8_t *mac)
+{
+	printf("%02x:%02x:%02x:%02x:%02x:%02x",
 		   mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
-void print_ip(const uint8_t ip[IPV4_LENGTH]) {
+void print_ip(const uint8_t *ip)
+{
 	printf("%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
 }
 
-void verbose(t_arp_header arp)
+void print_eth_header(const t_eth_header *eth)
+{
+	printf("Ethernet Header:\n");
+	printf("  Destination MAC: ");
+	print_mac(eth->destination_mac);
+	printf("\n  Source MAC: ");
+	print_mac(eth->source_mac);
+	printf("\n  EtherType: 0x%04x\n", ntohs(eth->ether_type));
+}
+
+void print_arp_header(const t_arp_header *arp)
 {
 	printf("ARP Header:\n");
-	printf("  Destination MAC address: ");
-	print_mac(arp.eth_header.destination_mac);
+	printf("  Hardware type: 0x%04x\n", ntohs(arp->hardware_type));
+	printf("  Protocol type: 0x%04x\n", ntohs(arp->protocol_type));
+	printf("  Hardware address length: %d\n", arp->hardware_len);
+	printf("  Protocol address length: %d\n", arp->protocol_len);
+	printf("  Opcode: %d (%s)\n", ntohs(arp->opcode),
+		   ntohs(arp->opcode) == REQUEST ? "REQUEST" : "REPLY");
+
+	printf("  Source IP: ");
+	print_ip(arp->source.ip);
+	printf("\n  Source MAC: ");
+	print_mac(arp->source.mac);
+
+	printf("\n  Target IP: ");
+	print_ip(arp->target.ip);
+	printf("\n  Target MAC: ");
+	print_mac(arp->target.mac);
 	printf("\n");
+}
 
-	printf("  Source MAC address: ");
-	print_mac(arp.eth_header.source_mac);
-	printf("\n");
+void print_arp_packet(const t_arp_packet *packet)
+{
+	print_eth_header(&packet->eth_header);
+	print_arp_header(&packet->arp_header);
+}
 
-	printf("  Ethernet type: 0x%04x ", ntohs(arp.eth_header.ether_type));
-	switch(ntohs(arp.eth_header.ether_type)) {
-		case 0x0806: printf("(ARP)\n"); break;
-		default: printf("(Unknown)\n");
-	}
+void verbose(const t_malcolm *malcolm)
+{
+	printf("Malcolm Structure Details:\n");
+	printf("Socket FD: %d\n", malcolm->sockfd);
 
-	printf("  Hardware type: 0x%04x ", ntohs(arp.hardware_type));
-	switch(ntohs(arp.hardware_type)) {
-		case 1: printf("(Ethernet)\n"); break;
-		default: printf("(Unknown)\n");
-	}
+	printf("\nARP Packet:\n");
+	print_arp_packet(&malcolm->packet);
 
-	printf("  Protocol type: 0x%04x ", ntohs(arp.protocol_type));
-	switch(ntohs(arp.protocol_type)) {
-		case 0x0800: printf("(IPv4)\n"); break;
-		default: printf("(Unknown)\n");
-	}
-
-	printf("  Hardware address length: %d\n", arp.hardware_len);
-	printf("  Protocol address length: %d\n", arp.protocol_len);
-
-	printf("  Opcode: %d ", ntohs(arp.opcode));
-	switch(ntohs(arp.opcode)) {
-		case 1: printf("(ARP Request)\n"); break;
-		case 2: printf("(ARP Reply)\n"); break;
-		default: printf("(Unknown)\n");
-	}
-
-	printf("  Source IP address being spoofed : ");
-	print_ip(arp.source.ip);
-	printf("\n");
-
-	printf("  Source MAC address (spoofed!) : ");
-	print_mac(arp.source.mac);
-	printf("\n");
-
-	printf("  Target IP address: ");
-	print_ip(arp.target.ip);
-	printf("\n");
-
-	printf("  Target MAC address: ");
-	print_mac(arp.target.mac);
+	printf("\nSocket Address:\n");
+	printf("  Family: %u\n", malcolm->sll.sll_family);
+	printf("  Protocol: 0x%04x\n", ntohs(malcolm->sll.sll_protocol));
+	printf("  Interface Index: %d\n", malcolm->sll.sll_ifindex);
+	printf("  Hardware Address Type: %u\n", malcolm->sll.sll_hatype);
+	printf("  Packet Type: %u\n", malcolm->sll.sll_pkttype);
+	printf("  Hardware Address Length: %u\n", malcolm->sll.sll_halen);
+	printf("  Hardware Address: ");
+	print_mac(malcolm->sll.sll_addr);
 	printf("\n");
 }
