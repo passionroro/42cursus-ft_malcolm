@@ -24,6 +24,7 @@ all: $(NAME)
 
 $(OBJ_DIR)%.o : $(SRCS_DIR)%.c
 		@mkdir -p $(OBJ_DIR)
+		@mkdir -p $(OBJ_DIR)/utils
 		$(CC) -c $(CFLAGS) $(DEBUGGING) $(LFLAGS) $< -o $@
 
 $(NAME): $(OBJS)
