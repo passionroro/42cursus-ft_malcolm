@@ -6,12 +6,12 @@ int initialize_socket(t_malcolm *malcolm)
 
 	// check the socket ! ALL or ARP ? RAW or DGRAM ?
 	malcolm->sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
-	if (malcolm->sockfd == -1) 
+	if (malcolm->sockfd == -1)
 	{
 		return (handle_error("socket"));
 	}
 
-	if (getifaddrs(&ifaddr) == -1) 
+	if (getifaddrs(&ifaddr) == -1)
 	{
 		close(malcolm->sockfd);
 		return (handle_error("getifaddrs"));
@@ -23,14 +23,15 @@ int initialize_socket(t_malcolm *malcolm)
 		printf("now looking for an available interface...\n");
 	}
 
-	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
+	{
 		if (ifa->ifa_addr == NULL)
 			continue;
 
 		if (ifa->ifa_flags & IFF_UP &&
-			!(ifa->ifa_flags & IFF_LOOPBACK) && 
+			!(ifa->ifa_flags & IFF_LOOPBACK) &&
 			ifa->ifa_flags & IFF_RUNNING &&
-			ifa->ifa_addr->sa_family == AF_INET) 
+			ifa->ifa_addr->sa_family == AF_INET)
 		{
 			if (malcolm->verbose)
 			{
@@ -52,13 +53,13 @@ int initialize_socket(t_malcolm *malcolm)
 	malcolm->sll.sll_ifindex = if_nametoindex(malcolm->if_name);
 	malcolm->sll.sll_protocol = htons(ETH_P_ALL);
 
-	if (bind(malcolm->sockfd, (struct sockaddr*)&malcolm->sll, sizeof(malcolm->sll)) == -1) 
+	if (bind(malcolm->sockfd, (struct sockaddr *)&malcolm->sll, sizeof(malcolm->sll)) == -1)
 	{
 		close(malcolm->sockfd);
 		return (handle_error("bind"));
 	}
 
-	printf("listening on interface %s...\n", malcolm->if_name);
+	printf(RED "listening on interface %s...\n" RESET, malcolm->if_name);
 
 	return 0;
 }

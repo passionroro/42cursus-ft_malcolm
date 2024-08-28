@@ -49,13 +49,14 @@ int send_spoofed_arp(t_malcolm *malcolm)
 	memcpy(buffer + sizeof(struct ethhdr), spoofed_packet.arp, sizeof(t_arphdr));
 
 	if (sendto(malcolm->sockfd, buffer, ETH_FRAME_MIN, 0,
-			   (struct sockaddr *)&malcolm->sll, sizeof(malcolm->sll)) < 0) {
+			   (struct sockaddr *)&malcolm->sll, sizeof(malcolm->sll)) < 0)
+	{
 		return (handle_error("sendto"));
 	}
 
 	if (malcolm->verbose)
 	{
-		printf("sent packet to target.\ncheck arp cache!\n");
+		printf(GREEN "sent packet to target.\ncheck arp cache!\n" RESET);
 	}
 
 	return 0;

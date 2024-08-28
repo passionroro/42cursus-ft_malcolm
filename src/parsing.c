@@ -4,7 +4,7 @@
 static int parse_mac_octet(const char *str)
 {
 	int i = -1;
-	
+
 	if (ft_strlen(str) != 2)
 	{
 		errno = EINVAL;
@@ -25,7 +25,7 @@ static int parse_mac_octet(const char *str)
 
 static int parse_mac_address(const char *str, uint8_t (*mac)[ETH_ALEN])
 {
-	char** mac_split = ft_split(str, ':');
+	char **mac_split = ft_split(str, ':');
 	if (!mac_split)
 	{
 		errno = ENOMEM;
@@ -60,7 +60,7 @@ static int parse_mac_address(const char *str, uint8_t (*mac)[ETH_ALEN])
 static int parse_ip_octet(const char *str)
 {
 	int octet, i = -1;
-	
+
 	if (ft_strlen(str) > 3)
 	{
 		errno = EINVAL;
@@ -88,7 +88,7 @@ static int parse_ip_octet(const char *str)
 
 static int parse_ip_address(const char *str, uint8_t (*ip)[IPV4_LENGTH])
 {
-	char** ip_split = ft_split(str, '.');
+	char **ip_split = ft_split(str, '.');
 	if (!ip_split)
 	{
 		errno = ENOMEM;
@@ -120,11 +120,11 @@ static int parse_ip_address(const char *str, uint8_t (*ip)[IPV4_LENGTH])
 		if (ip_conversion == 0)
 		{
 			errno = EINVAL;
-		}	
+		}
 		else if (ip_conversion == -1)
 		{
 			errno = EAFNOSUPPORT;
-		}	
+		}
 		handle_error("ip conversion text to binary failed");
 	}
 
@@ -133,6 +133,7 @@ static int parse_ip_address(const char *str, uint8_t (*ip)[IPV4_LENGTH])
 	return 0;
 }
 
+// VERBOSE
 static int parse_verbose_mode(char *arg, bool *verbose)
 {
 	if (ft_strncmp(arg, "-v\0", 3))
@@ -148,7 +149,7 @@ static int parse_verbose_mode(char *arg, bool *verbose)
 }
 
 // MAIN
-int	parse_arguments(char **argv, t_client *source, t_client *target, bool *verbose)
+int parse_arguments(char **argv, t_client *source, t_client *target, bool *verbose)
 {
 	if (parse_ip_address(argv[1], &(source->ip)) != 0 ||
 		parse_ip_address(argv[3], &(target->ip)) != 0)
@@ -169,7 +170,7 @@ int	parse_arguments(char **argv, t_client *source, t_client *target, bool *verbo
 
 	if (*verbose == true)
 	{
-		printf("parsing successfull!\n");
+		printf(GREEN "parsing successfull!\n");
 		printf("source:\n- ip: ");
 		print_ip(source->ip);
 		printf("- mac: ");
@@ -178,7 +179,7 @@ int	parse_arguments(char **argv, t_client *source, t_client *target, bool *verbo
 		print_ip(target->ip);
 		printf("- mac: ");
 		print_mac(target->mac);
-		printf("\n");
+		printf("\n" RESET);
 	}
 
 	return 0;

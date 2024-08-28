@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-int	handle_error(const char *message);
+int handle_error(const char *message);
 
 /* most frequent errno */
 /*

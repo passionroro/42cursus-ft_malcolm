@@ -19,7 +19,7 @@ int run(t_malcolm *malcolm)
 		if (bytes_read < -1)
 		{
 			ok = handle_error("recvfrom");
-			break ;
+			break;
 		}
 		else if (bytes_read <= 0)
 		{
@@ -33,17 +33,17 @@ int run(t_malcolm *malcolm)
 				t_arphdr *arp = (t_arphdr *)(buffer + sizeof(struct ethhdr));
 				malcolm->packet.eth = eth;
 				malcolm->packet.arp = arp;
-				if (is_broadcast_request(&malcolm->packet) && \
-						is_request(&malcolm->packet) && \
-						is_from_target(malcolm, &malcolm->packet) && \
-						is_requesting_source(malcolm, &malcolm->packet))
+				if (is_broadcast_request(&malcolm->packet) &&
+					is_request(&malcolm->packet) &&
+					is_from_target(malcolm, &malcolm->packet) &&
+					is_requesting_source(malcolm, &malcolm->packet))
 				{
 					if (malcolm->verbose)
 					{
 						verbose(malcolm);
 					}
 					ok = send_spoofed_arp(malcolm);
-					break ;
+					break;
 				}
 			}
 		}
@@ -77,4 +77,3 @@ int main(int argc, char **argv)
 
 	return run(&malcolm);
 }
-
