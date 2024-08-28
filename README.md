@@ -1,5 +1,9 @@
 # `ft_malcolm`
 
+```sh
+make && sudo ./ft_malcolm 192.168.111.2 00:0c:29:b4:fb:46 192.168.111.133 00:0c:29:71:16:5a
+```
+
 Usage
 
 ```sh

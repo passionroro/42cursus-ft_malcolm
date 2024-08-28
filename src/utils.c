@@ -30,29 +30,29 @@ void print_ip(const uint8_t *ip)
 void print_eth_header(struct ethhdr *eth)
 {
 	printf("  Ethernet Header:\n");
-	printf("    Destination MAC: ");
+	printf("	Destination MAC: ");
 	print_mac(eth->h_dest);
-	printf("    Source MAC: ");
+	printf("	Source MAC: ");
 	print_mac(eth->h_source);
-	printf("    Type: %s (0x%04x)\n", ntohs(eth->h_proto) == 0x0806 ? "ARP" : "Unknown", ntohs(eth->h_proto));
+	printf("	Type: %s (0x%04x)\n", ntohs(eth->h_proto) == 0x0806 ? "ARP" : "Unknown", ntohs(eth->h_proto));
 }
 
 void print_arp_header(t_arphdr *arp)
 {
 	printf("  ARP Header:\n");
-	printf("    Hardware type: %s (0x%04x)\n", ntohs(arp->ar_hrd) == ARPHRD_ETHER ? "Ethernet" : "Unknown", ntohs(arp->ar_hrd));
-	printf("    Protocol type: IPv4 (0x%04x)\n", ntohs(arp->ar_pro));
-	printf("    Hardware address length: %d\n", arp->ar_hln);
-	printf("    Protocol address length: %d\n", arp->ar_pln);
-	printf("    Opcode: %d (%s)\n", ntohs(arp->ar_op),
+	printf("	Hardware type: %s (0x%04x)\n", ntohs(arp->ar_hrd) == ARPHRD_ETHER ? "Ethernet" : "Unknown", ntohs(arp->ar_hrd));
+	printf("	Protocol type: IPv4 (0x%04x)\n", ntohs(arp->ar_pro));
+	printf("	Hardware address length: %d\n", arp->ar_hln);
+	printf("	Protocol address length: %d\n", arp->ar_pln);
+	printf("	Opcode: %d (%s)\n", ntohs(arp->ar_op),
 		   ntohs(arp->ar_op) == REQUEST ? "REQUEST" : "REPLY");
-	printf("    Sender MAC address: ");
+	printf("	Sender MAC address: ");
 	print_mac(arp->ar_sha);
-	printf("    Sender IP address: ");
+	printf("	Sender IP address: ");
 	print_ip(arp->ar_sip);
-	printf("    Target MAC address: ");
+	printf("	Target MAC address: ");
 	print_mac(arp->ar_tha);
-	printf("    Target IP address: ");
+	printf("	Target IP address: ");
 	print_ip(arp->ar_tip);
 }
 
@@ -64,7 +64,7 @@ void print_arp_packet(t_arp_packet packet)
 
 void verbose(const t_malcolm *malcolm)
 {
-	printf("-----===============-----\n");
+	printf("\n-----===============-----\n");
 	printf("Malcolm Structure Details:\n");
 	printf("Socket FD: %d\n", malcolm->sockfd);
 
@@ -81,4 +81,33 @@ void verbose(const t_malcolm *malcolm)
 	printf("  Hardware Address: ");
 	print_mac(malcolm->sll.sll_addr);
 	printf("-----===============-----\n\n");
+}
+
+void print_help(char *arg)
+{
+	printf("ft_malcolm, by rohoarau for 42Lausanne\n");
+	printf("usage: %s [ source ip ] [ source mac address ]\n\t\t    [ target ip ] [ target mac address ]\n", arg);
+	printf("\t\t    [ -v <verbose> ]\n\n");
+	printf("For complete usage info, check the README.\n");
+}
+
+bool is_broadcast_request(t_arp_packet *packet)
+{
+	return ft_memcmp(packet->eth->h_dest, "\xff\xff\xff\xff\xff\xff", ETH_ALEN) == 0;
+}
+
+bool is_request(t_arp_packet *packet)
+{
+	return ntohs(packet->arp->ar_op) == ARPOP_REQUEST;
+}
+
+bool is_from_target(t_malcolm *malcolm, t_arp_packet *packet)
+{
+	return ft_memcmp(packet->arp->ar_sip, malcolm->target.ip, 4) == 0 &&
+		   ft_memcmp(packet->arp->ar_sha, malcolm->target.mac, ETH_ALEN) == 0;
+}
+
+bool is_requesting_source(t_malcolm *malcolm, t_arp_packet *packet)
+{
+	return ft_memcmp(packet->arp->ar_tip, malcolm->source.ip, 4) == 0;
 }
