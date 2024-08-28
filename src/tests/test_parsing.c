@@ -35,7 +35,7 @@ char *expect_mac[6] = {
 
 char **test_invalid_mac() 
 {
-    uint8_t test_mac[MAC_LENGTH];
+    uint8_t test_mac[ETH_ALEN];
     
     parse_mac_address("00:aa:ff:99:00:fg", &test_mac);
     parse_mac_address("00:aa:ff:99:00:-e", &test_mac);

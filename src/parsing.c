@@ -23,7 +23,7 @@ static int parse_mac_octet(const char *str)
 	return 0;
 }
 
-static int parse_mac_address(const char *str, uint8_t (*mac)[MAC_LENGTH])
+static int parse_mac_address(const char *str, uint8_t (*mac)[ETH_ALEN])
 {
 	char** mac_split = ft_split(str, ':');
 	if (!mac_split)

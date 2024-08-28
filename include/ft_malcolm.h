@@ -12,14 +12,13 @@
 #include <stdint.h>
 #include <arpa/inet.h>
 #include <limits.h>
-
-// /usr/include/linux/if_arp.h
-#include <linux/if_packet.h>
 #include <sys/socket.h>
 #include <net/ethernet.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <ifaddrs.h>
+// /usr/include/linux
+#include <linux/if_packet.h>
 #include <linux/if_link.h>
 #include <linux/if_arp.h>
 
@@ -27,7 +26,6 @@
 #define REQUEST 1
 #define BROADCAST 1
 #define REPLY 2
-#define MAC_LENGTH 6
 #define IPV4_LENGTH 4
 #define BUFF_SIZE 65536
 #define ETH_FRAME_MIN 60
@@ -35,7 +33,7 @@
 typedef struct s_client
 {
 	uint8_t ip[IPV4_LENGTH];
-	uint8_t mac[MAC_LENGTH];
+	uint8_t mac[ETH_ALEN];
 } t_client;
 
 typedef struct s_arphdr
