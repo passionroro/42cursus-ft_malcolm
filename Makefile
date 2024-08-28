@@ -3,7 +3,14 @@ LIBFT 		= 	libft.a
 LIB_DIR		=	libft/
 OBJ_DIR		=	obj/
 SRCS_DIR	=	src/
-SRCS		=	main.c error.c parsing.c packets.c sockets.c utils/utils.c utils/print.c 
+SRCS		=	main.c				\
+				error.c				\
+				parsing.c 			\
+				init_sockets.c		\
+				process_packets.c	\
+				spoof_arp_reply.c	\
+				utils/utils.c		\
+				utils/print.c 
 
 TEST_DIR	= src/tests/
 TEST_SRCS	= test_main.c test_parsing.c

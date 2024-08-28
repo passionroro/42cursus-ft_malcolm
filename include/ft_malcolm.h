@@ -21,20 +21,19 @@
 
 #include "../libft/libft.h"
 #include "error.h"
-#include <stdio.h>
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <unistd.h>
-#include <string.h>
 #include <stdint.h>
-#include <arpa/inet.h>
+#include <unistd.h>
 #include <limits.h>
-#include <sys/socket.h>
-#include <net/ethernet.h>
-#include <sys/ioctl.h>
-#include <net/if.h>
 #include <ifaddrs.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <net/ethernet.h>
+#include <net/if.h>
 // /usr/include/linux
 #include <linux/if_packet.h>
 #include <linux/if_link.h>
@@ -52,15 +51,15 @@ typedef struct s_client
 
 typedef struct s_arphdr
 {
-	__be16 ar_hrd;					/*format of hardware address*/
-	__be16 ar_pro;					/*format of protocol address*/
-	unsigned char ar_hln;			/*length of hardware address*/
-	unsigned char ar_pln;			/*length of protocol address*/
-	__be16 ar_op;					/*ARP opcode (command)*/
-	unsigned char ar_sha[ETH_ALEN]; /*sender hardware address*/
-	unsigned char ar_sip[4];		/*sender IP address*/
-	unsigned char ar_tha[ETH_ALEN]; /*target hardware address*/
-	unsigned char ar_tip[4];		/*target IP address*/
+	__be16 ar_hrd;					   /*format of hardware address*/
+	__be16 ar_pro;					   /*format of protocol address*/
+	unsigned char ar_hln;			   /*length of hardware address*/
+	unsigned char ar_pln;			   /*length of protocol address*/
+	__be16 ar_op;					   /*ARP opcode (command)*/
+	unsigned char ar_sha[ETH_ALEN];	   /*sender hardware address*/
+	unsigned char ar_sip[IPV4_LENGTH]; /*sender IP address*/
+	unsigned char ar_tha[ETH_ALEN];	   /*target hardware address*/
+	unsigned char ar_tip[IPV4_LENGTH]; /*target IP address*/
 } t_arphdr;
 
 typedef struct s_arp_packet
@@ -72,9 +71,9 @@ typedef struct s_arp_packet
 typedef struct s_malcolm
 {
 	int sockfd;
-	t_arp_packet packet;
 	char if_name[IFNAMSIZ];
 	struct sockaddr_ll sll;
+	t_arp_packet packet;
 	t_client source;
 	t_client target;
 	bool verbose;
@@ -84,14 +83,19 @@ typedef struct s_malcolm
  * FUNCTIONS
  */
 
-// sockets.c
+// init_sockets.c
 int initialize_socket(t_malcolm *malcolm);
 
-// packets.c
+// process_packets.c
+int read_and_process_packets(t_malcolm *malcolm);
+
+// spoof_arp_reply.c
 int send_spoofed_arp(t_malcolm *malcolm);
 
 // parsing.c
 int parse_arguments(char **argv, t_client *source, t_client *target, bool *verbose);
+int parse_mac_address(const char *str, uint8_t (*mac)[ETH_ALEN]);
+int parse_ip_address(const char *str, uint8_t (*ip)[IPV4_LENGTH]);
 
 // utils/utils.c
 int ft_ishexadecimal(int c);

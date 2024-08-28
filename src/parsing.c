@@ -23,7 +23,7 @@ static int parse_mac_octet(const char *str)
 	return 0;
 }
 
-static int parse_mac_address(const char *str, uint8_t (*mac)[ETH_ALEN])
+int parse_mac_address(const char *str, uint8_t (*mac)[ETH_ALEN])
 {
 	char **mac_split = ft_split(str, ':');
 	if (!mac_split)
@@ -86,7 +86,7 @@ static int parse_ip_octet(const char *str)
 	return 0;
 }
 
-static int parse_ip_address(const char *str, uint8_t (*ip)[IPV4_LENGTH])
+int parse_ip_address(const char *str, uint8_t (*ip)[IPV4_LENGTH])
 {
 	char **ip_split = ft_split(str, '.');
 	if (!ip_split)

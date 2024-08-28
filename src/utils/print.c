@@ -22,7 +22,7 @@ void print_eth_header(struct ethhdr *eth)
 
 void print_arp_header(t_arphdr *arp)
 {
-    printf(BLUE "  ARP Header:\n");
+    printf(CYAN "  ARP Header:\n");
     printf("	Hardware type: %s (0x%04x)\n", ntohs(arp->ar_hrd) == ARPHRD_ETHER ? "Ethernet" : "Unknown", ntohs(arp->ar_hrd));
     printf("	Protocol type: IPv4 (0x%04x)\n", ntohs(arp->ar_pro));
     printf("	Hardware address length: %d\n", arp->ar_hln);
