@@ -12,7 +12,7 @@ void print_ip(const uint8_t *ip)
 }
 void print_eth_header(struct ethhdr *eth)
 {
-    printf(BG_WHITE GREEN "  Ethernet Header:\n");
+    printf(GREEN "  Ethernet Header:\n");
     printf("	Destination MAC: ");
     print_mac(eth->h_dest);
     printf("	Source MAC: ");
@@ -22,7 +22,7 @@ void print_eth_header(struct ethhdr *eth)
 
 void print_arp_header(t_arphdr *arp)
 {
-    printf(BG_WHITE BLUE "  ARP Header:\n");
+    printf(BLUE "  ARP Header:\n");
     printf("	Hardware type: %s (0x%04x)\n", ntohs(arp->ar_hrd) == ARPHRD_ETHER ? "Ethernet" : "Unknown", ntohs(arp->ar_hrd));
     printf("	Protocol type: IPv4 (0x%04x)\n", ntohs(arp->ar_pro));
     printf("	Hardware address length: %d\n", arp->ar_hln);
@@ -48,14 +48,14 @@ void print_arp_packet(t_arp_packet packet)
 
 void verbose(const t_malcolm *malcolm)
 {
-    printf(BG_WHITE MAGENTA "\n-----===============-----\n");
+    printf(MAGENTA"\n-----===============-----\n");
     printf("Malcolm Structure Details:\n");
     printf("Socket FD: %d\n", malcolm->sockfd);
 
     printf("ARP Packet:\n");
     print_arp_packet(malcolm->packet);
 
-    printf(BG_WHITE RED "Socket Address:\n");
+    printf(RED "Socket Address:\n");
     printf("  Family: %u\n", malcolm->sll.sll_family);
     printf("  Protocol: 0x%04x\n", ntohs(malcolm->sll.sll_protocol));
     printf("  Interface Index: %d\n", malcolm->sll.sll_ifindex);
