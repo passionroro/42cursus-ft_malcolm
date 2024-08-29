@@ -71,7 +71,6 @@ typedef struct s_arp_packet
 typedef struct s_malcolm
 {
 	int sockfd;
-	char if_name[IFNAMSIZ];
 	struct sockaddr_ll sll;
 	t_arp_packet packet;
 	t_client source;

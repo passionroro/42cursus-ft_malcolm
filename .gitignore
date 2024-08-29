@@ -5,3 +5,4 @@ libft/libft.a
 ft_malcolm
 *.swp
 .vscode/
+.DS_Store

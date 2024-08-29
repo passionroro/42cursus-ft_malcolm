@@ -4,7 +4,6 @@ int initialize_socket(t_malcolm *malcolm)
 {
 	struct ifaddrs *ifaddr, *ifa;
 
-	// check the socket ! ALL or ARP ? RAW or DGRAM ?
 	malcolm->sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
 	if (malcolm->sockfd == -1)
 	{
@@ -37,29 +36,32 @@ int initialize_socket(t_malcolm *malcolm)
 			{
 				printf("interface found: %s\n", ifa->ifa_name);
 			}
-			ft_strlcpy(malcolm->if_name, ifa->ifa_name, IFNAMSIZ);
 			break;
 		}
 	}
 
 	if (ifa == NULL)
 	{
+		freeifaddrs(ifaddr);
 		close(malcolm->sockfd);
 		return (handle_error("no available interface"));
 	}
 
 	memset(&malcolm->sll, 0, sizeof(malcolm->sll));
 	malcolm->sll.sll_family = AF_PACKET;
-	malcolm->sll.sll_ifindex = if_nametoindex(malcolm->if_name);
-	malcolm->sll.sll_protocol = htons(ETH_P_ALL);
+	malcolm->sll.sll_ifindex = if_nametoindex(ifa->ifa_name);
+	malcolm->sll.sll_protocol = htons(ETH_P_ARP);
 
 	if (bind(malcolm->sockfd, (struct sockaddr *)&malcolm->sll, sizeof(malcolm->sll)) == -1)
 	{
+		freeifaddrs(ifaddr);
 		close(malcolm->sockfd);
 		return (handle_error("bind"));
 	}
 
-	printf(RED "listening on interface %s...\n" RESET, malcolm->if_name);
+	printf(RED "listening on interface %s...\n" RESET, ifa->ifa_name);
+
+	freeifaddrs(ifaddr);
 
 	return 0;
 }

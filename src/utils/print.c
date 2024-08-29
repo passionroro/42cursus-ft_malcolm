@@ -48,7 +48,7 @@ void print_arp_packet(t_arp_packet packet)
 
 void verbose(const t_malcolm *malcolm)
 {
-    printf(MAGENTA"\n-----===============-----\n");
+    printf(MAGENTA "\n-----===============-----\n");
     printf("Malcolm Structure Details:\n");
     printf("Socket FD: %d\n", malcolm->sockfd);
 

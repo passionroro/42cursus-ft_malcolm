@@ -25,6 +25,7 @@ int send_spoofed_arp(t_malcolm *malcolm)
 	t_arp_packet spoofed_packet;
 	struct ethhdr eth;
 	t_arphdr arp;
+	char buffer[ETH_FRAME_MIN];
 
 	spoofed_packet.eth = &eth;
 	spoofed_packet.arp = &arp;
@@ -43,7 +44,6 @@ int send_spoofed_arp(t_malcolm *malcolm)
 		print_arp_packet(spoofed_packet);
 	}
 
-	char buffer[ETH_FRAME_MIN];
 	memset(buffer, 0, ETH_FRAME_MIN);
 	memcpy(buffer, spoofed_packet.eth, sizeof(struct ethhdr));
 	memcpy(buffer + sizeof(struct ethhdr), spoofed_packet.arp, sizeof(t_arphdr));
