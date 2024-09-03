@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <signal.h>
 #include <unistd.h>
 #include <limits.h>
 #include <ifaddrs.h>
@@ -110,5 +111,8 @@ void print_mac(const uint8_t *mac);
 void print_ip(const uint8_t *ip);
 void print_arp_packet(t_arp_packet packet);
 void print_help(char *arg);
+
+// utils/signal.c
+void signal_handler(int sig);
 
 #endif // __FT_MALCOLM_H__
