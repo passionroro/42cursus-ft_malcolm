@@ -54,7 +54,6 @@ int read_and_process_packets(t_malcolm *malcolm)
             }
             else
             {
-                errno = ENOMEM;
                 ok = handle_error("recvfrom");
             }
         }
