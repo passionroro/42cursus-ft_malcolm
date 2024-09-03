@@ -91,7 +91,8 @@ ARP packets are transmitted within Ethernet frames. Ethernet frames have a minim
 - 14 bytes for the Ethernet header
 - 46 bytes for the payload (minimum)
 - 4 bytes for the Frame Check Sequence (FCS)
-  When we add the 14-byte Ethernet header to the 28-byte ARP packet, we get 42 bytes.
+
+When crafting an ARP Reply, we create a 14-byte Ethernet header and a 28-byte ARP packet. That adds up to 42 bytes, which doesn't meet the requirements to fit within an ethernet frame.
 
 So to have a 64 bytes packet, we need to add padding. The padding should bring the total frame size (excluding the FCS) to 60 bytes, allowing the 4-byte FCS to complete the 64-byte minimum.
 
