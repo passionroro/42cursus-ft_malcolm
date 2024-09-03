@@ -65,7 +65,7 @@ mac: 00:0c:29:71:16:5a
 And running this command :
 
 ```sh
-./ft_malcolm 192.168.111.2 00:0c:29:b4:fb:46 192.168.111.133 00:0c:29:71:16:5a
+./ft_malcolm 192.168.111.2 00:0c:29:b4:fb:46 192.168.111.132 00:0c:29:71:16:5a
 ```
 
 In this example:
