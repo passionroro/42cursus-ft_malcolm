@@ -1,5 +1,7 @@
 #include "ft_malcolm.h"
 
+int g_ok = 1;
+
 int run(t_malcolm *malcolm)
 {
 	if (initialize_socket(malcolm) < 0)
@@ -30,6 +32,8 @@ int main(int argc, char **argv)
 	{
 		return -1;
 	}
+
+	signal(SIGINT, signal_handler);
 
 	malcolm.source = source;
 	malcolm.target = target;

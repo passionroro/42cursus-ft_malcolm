@@ -44,6 +44,8 @@
 #define BUFF_SIZE 65536
 #define ETH_FRAME_MIN 60
 
+extern int g_ok;
+
 typedef struct s_client
 {
 	uint8_t ip[IPV4_LENGTH];
@@ -113,6 +115,6 @@ void print_arp_packet(t_arp_packet packet);
 void print_help(char *arg);
 
 // utils/signal.c
-int signal_handler(int sig);
+void signal_handler(int sig);
 
 #endif // __FT_MALCOLM_H__
