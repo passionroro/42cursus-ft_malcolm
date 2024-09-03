@@ -47,8 +47,16 @@ int read_and_process_packets(t_malcolm *malcolm)
 
         if (bytes_read < 0)
         {
-            errno = ENOMEM;
-            ok = handle_error("recvfrom");
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
+            {
+                printf("verbose: g_ok: %d\n", g_ok);
+                continue;
+            }
+            else
+            {
+                errno = ENOMEM;
+                ok = handle_error("recvfrom");
+            }
         }
         else
         {

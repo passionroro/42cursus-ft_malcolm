@@ -1,5 +1,20 @@
 #include "ft_malcolm.h"
 
+int set_socket_timeout(int sockfd, int seconds, int microseconds)
+{
+	struct timeval timeout;
+	timeout.tv_sec = seconds;
+	timeout.tv_usec = microseconds;
+
+	if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0)
+	{
+		errno = ENOMEM;
+		return -1;
+	}
+
+	return 0;
+}
+
 int initialize_socket(t_malcolm *malcolm)
 {
 	struct ifaddrs *ifaddr, *ifa;
@@ -8,6 +23,11 @@ int initialize_socket(t_malcolm *malcolm)
 	if (malcolm->sockfd == -1)
 	{
 		return (handle_error("socket"));
+	}
+
+	if (set_socket_timeout(malcolm->sockfd, 1, 0) < 0)
+	{
+		return (handle_error("setsockopt"));
 	}
 
 	if (getifaddrs(&ifaddr) == -1)
