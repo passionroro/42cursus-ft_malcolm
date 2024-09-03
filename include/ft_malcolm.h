@@ -113,6 +113,6 @@ void print_arp_packet(t_arp_packet packet);
 void print_help(char *arg);
 
 // utils/signal.c
-void signal_handler(int sig);
+int signal_handler(int sig);
 
 #endif // __FT_MALCOLM_H__

@@ -42,8 +42,8 @@ int read_and_process_packets(t_malcolm *malcolm)
 
     while (ok > 0)
     {
-        signal(SIGINT, signal_handler);
-        
+        ok = signal(SIGINT, signal_handler);
+
         bytes_read = recvfrom(malcolm->sockfd, buffer, BUFF_SIZE, 0,
                               (struct sockaddr *)&malcolm->sll, &addrlen);
 
