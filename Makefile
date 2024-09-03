@@ -10,7 +10,8 @@ SRCS		=	main.c				\
 				process_packets.c	\
 				spoof_arp_reply.c	\
 				utils/utils.c		\
-				utils/print.c 
+				utils/print.c 		\
+				utils/signal.c 		
 
 TEST_DIR	= src/tests/
 TEST_SRCS	= test_main.c test_parsing.c
