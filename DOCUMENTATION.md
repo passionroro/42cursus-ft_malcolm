@@ -99,9 +99,9 @@ So to have a 64 bytes packet, we need to add padding. The padding should bring t
 ```c
 char buffer[ETH_FRAME_MIN];
 
-memset(buffer, 0, ETH_FRAME_MIN);
-memcpy(buffer, spoofed_packet.eth, sizeof(struct ethhdr));
-memcpy(buffer + sizeof(struct ethhdr), spoofed_packet.arp, sizeof(t_arphdr));
+ft_memset(buffer, 0, ETH_FRAME_MIN);
+ft_memcpy(buffer, spoofed_packet.eth, sizeof(struct ethhdr));
+ft_memcpy(buffer + sizeof(struct ethhdr), spoofed_packet.arp, sizeof(t_arphdr));
 ```
 
 Boom ! This should be all to send the spoofed packet to the target. The arp cache of the target should be updated !!

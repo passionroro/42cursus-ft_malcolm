@@ -14,10 +14,10 @@ static void init_spoofed_arp(t_malcolm *malcolm, t_arphdr *arp)
 	arp->ar_hln = malcolm->packet.arp->ar_hln;
 	arp->ar_pln = malcolm->packet.arp->ar_pln;
 	arp->ar_op = htons(ARPOP_REPLY);
-	memcpy(arp->ar_sha, malcolm->source.mac, ETH_ALEN);
-	memcpy(arp->ar_sip, malcolm->source.ip, 4);
-	memcpy(arp->ar_tha, malcolm->target.mac, ETH_ALEN);
-	memcpy(arp->ar_tip, malcolm->target.ip, 4);
+	ft_memcpy(arp->ar_sha, malcolm->source.mac, ETH_ALEN);
+	ft_memcpy(arp->ar_sip, malcolm->source.ip, 4);
+	ft_memcpy(arp->ar_tha, malcolm->target.mac, ETH_ALEN);
+	ft_memcpy(arp->ar_tip, malcolm->target.ip, 4);
 }
 
 int send_spoofed_arp(t_malcolm *malcolm)
@@ -44,9 +44,9 @@ int send_spoofed_arp(t_malcolm *malcolm)
 		print_arp_packet(spoofed_packet);
 	}
 
-	memset(buffer, 0, ETH_FRAME_MIN);
-	memcpy(buffer, spoofed_packet.eth, sizeof(struct ethhdr));
-	memcpy(buffer + sizeof(struct ethhdr), spoofed_packet.arp, sizeof(t_arphdr));
+	ft_memset(buffer, 0, ETH_FRAME_MIN);
+	ft_memcpy(buffer, spoofed_packet.eth, sizeof(struct ethhdr));
+	ft_memcpy(buffer + sizeof(struct ethhdr), spoofed_packet.arp, sizeof(t_arphdr));
 
 	if (sendto(malcolm->sockfd, buffer, ETH_FRAME_MIN, 0,
 			   (struct sockaddr *)&malcolm->sll, sizeof(malcolm->sll)) < 0)

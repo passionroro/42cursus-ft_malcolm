@@ -67,7 +67,7 @@ int initialize_socket(t_malcolm *malcolm)
 		return (handle_error("no available interface"));
 	}
 
-	memset(&malcolm->sll, 0, sizeof(malcolm->sll));
+	ft_memset(&malcolm->sll, 0, sizeof(malcolm->sll));
 	malcolm->sll.sll_family = AF_PACKET;
 	malcolm->sll.sll_ifindex = if_nametoindex(ifa->ifa_name);
 	malcolm->sll.sll_protocol = htons(ETH_P_ARP);
