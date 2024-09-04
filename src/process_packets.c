@@ -49,7 +49,6 @@ int read_and_process_packets(t_malcolm *malcolm)
         {
             if (errno == EAGAIN || errno == EWOULDBLOCK)
             {
-                printf("verbose: g_ok: %d\n", g_ok);
                 continue;
             }
             else

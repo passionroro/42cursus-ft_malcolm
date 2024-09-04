@@ -58,14 +58,14 @@ ip: 192.168.111.128
 mac: 00:0c:29:b4:fb:46
 
 host 2:
-ip: 192.168.111.132
+ip: 192.168.111.133
 mac: 00:0c:29:71:16:5a
 ```
 
 And running this command :
 
 ```sh
-./ft_malcolm 192.168.111.2 00:0c:29:b4:fb:46 192.168.111.132 00:0c:29:71:16:5a
+./ft_malcolm 192.168.111.2 00:0c:29:b4:fb:46 192.168.111.133 00:0c:29:71:16:5a
 ```
 
 In this example:
@@ -104,3 +104,5 @@ RFCs can be hard to read but they got everything.
 `netdiscover` - get info about network
 
 `ip a` / `ip link show` / `ip r` - get info about network interaces
+
+`sudo ip -s -s neigh flush all` - flush arp cache
